@@ -47,6 +47,10 @@
 
     <button onclick="desligar()">Desligar Alarme</button>
 
+    <div>
+        <button onclick="returnToIndex()">Inserir outro Email</button>
+    </div>
+
     <img src="logo-fetin.png" alt="Logo FETIN" class="logo">
 
     <script>
@@ -67,6 +71,9 @@
                 console.error('Erro ao desligar o alarme:', error);
                 alert("Erro ao desligar o alarme. Tente novamente.");
             }
+        }
+        function returnToIndex() {
+            window.location.href = 'index.html';
         }
     </script>
 
