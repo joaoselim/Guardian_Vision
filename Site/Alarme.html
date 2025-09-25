@@ -1,183 +1,191 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Alarme</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Georgia, sans-serif;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            background-color: #121212;
-            color: #f0eada;
-            position: relative;
-        }
-        h1 {
-            margin-bottom: 20px;
-            font-size: 2.5em;
-        }
-        .status {
-            margin-bottom: 30px;
-            font-size: 1.2em;
-        }
-        .status-indicator {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            margin-left: 10px;
-            animation: pulse 2s infinite;
-        }
-        .status-ok {
-            background-color: #4CAF50;
-        }
-        .status-checking {
-            background-color: #FFC107;
-        }
-        .status-error {
-            background-color: #F44336;
-        }
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-        .info {
-            margin-bottom: 20px;
-            color: #aaa;
-            font-size: 0.9em;
-        }
-        button {
-            padding: 12px 24px;
-            font-size: 16px;
-            background-color: #333;
-            color: #f0eada;
-            border: 1px solid #666;
-            border-radius: 8px;
-            cursor: pointer;
-            margin: 8px;
-        }
-        button:hover {
-            background-color: #444;
-        }
-        .logo {
-            position: fixed;
-            bottom: 0px;
-            left: 10px;
-            width: 200px;
-        }
-        .last-check {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            font-size: 0.8em;
-            color: #666;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Alarme</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Georgia, sans-serif;
+      height: 100vh;
+      display: flex; 
+      flex-direction: column; 
+      justify-content: center; 
+      align-items: center;
+      text-align: center; 
+      background-color: #121212; 
+      color: #f0eada; 
+      position: relative;
+    }
+    h1 { margin-bottom: 20px; font-size: 2.5em; }
+    .status { margin-bottom: 30px; font-size: 1.2em; }
+    .status-indicator { 
+      display: inline-block; 
+      width: 20px; 
+      height: 20px; 
+      border-radius: 50%; 
+      margin-left: 10px; 
+      animation: pulse 2s infinite; 
+    }
+    .status-ok { background-color: #4CAF50; }
+    .status-checking { background-color: #FFC107; }
+    .status-error { background-color: #F44336; }
+    @keyframes pulse { 0%{opacity:1} 50%{opacity:0.5} 100%{opacity:1} }
+    .info { margin-bottom: 20px; color: #aaa; font-size: 0.9em; }
+    button { 
+      padding: 12px 24px; 
+      font-size: 16px; 
+      background-color: #333; 
+      color: #f0eada; 
+      border: 1px solid #666; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      margin: 8px; 
+    }
+    button:hover { background-color: #444; }
+    .logo { position: fixed; bottom: 0px; left: 10px; width: 200px; }
+  </style>
 </head>
 <body>
+  <h1>Alarme</h1>
 
-    <h1>Alarme</h1>
-    
-    <div class="status">
-        Status: <span id="statusText">Monitorando</span>
-        <span id="statusIndicator" class="status-indicator status-checking"></span>
-    </div>
-    
-    <div class="info">
-        
-    </div>
-    
+  <div class="status">
+    Status: <span id="statusText">Monitorando</span>
+    <span id="statusIndicator" class="status-indicator status-checking"></span>
+  </div>
+
+  <div class="info">
+    <p id="lastCheck">Última verificação: --</p>
+  </div>
+
+  <div>
     <button onclick="returnToIndex()">Inserir outro Email</button>
-    
-    <img src="logo-fetin.png" alt="Logo FETIN" class="logo">
-    
-    <div class="last-check">
-        Última verificação: <span id="lastCheck">--:--:--</span>
-    </div>
+  </div>
 
-    <script>
-        let isMonitoring = true;
-        let alarmActivated = false; // Variável que representa se o alarme foi ativado
-        let monitoringInterval;
-        
-        // Função para verificar o status do alarme
-        async function checkAlarmStatus() {
-            if (!isMonitoring) return;
-            
-            try {
-                // Atualiza o horário da última verificação
-                const now = new Date();
-                document.getElementById('lastCheck').textContent = now.toLocaleTimeString();
-                
-                // Aqui você pode fazer uma requisição para verificar o status real do alarme
-                // Por exemplo: const response = await fetch('http://172.20.10.3/alarm/status');
-                // const data = await response.json();
-                // alarmActivated = data.activated;
-                
-                // Para demonstração, vamos verificar se existe uma variável no localStorage
-                // ou se foi ativada manualmente
-                const storedStatus = localStorage.getItem('alarmStatus');
-                if (storedStatus === 'true') {
-                    alarmActivated = true;
-                }
-                
-                // Se o alarme foi ativado, redireciona para a página de alarme acionado
-                if (alarmActivated) {
-                    document.getElementById('statusText').textContent = 'ALARME ATIVADO!';
-                    document.getElementById('statusIndicator').className = 'status-indicator status-error';
-                    
-                    // Aguarda um momento para mostrar o status e depois redireciona
-                    setTimeout(() => {
-                        window.location.href = 'AlarmeAcionado.html';
-                    }, 1000);
-                    return;
-                }
-                
-                // Status normal - alarme não ativado
-                document.getElementById('statusText').textContent = 'Sistema Normal';
-                document.getElementById('statusIndicator').className = 'status-indicator status-ok';
-                
-            } catch (error) {
-                console.error('Erro ao verificar status do alarme:', error);
-                document.getElementById('statusText').textContent = 'Erro na Verificação';
-                document.getElementById('statusIndicator').className = 'status-indicator status-error';
-            }
-        }
-        
-        // Função para retornar ao índice
-        function returnToIndex() {
-            window.location.href = 'index.html';
-        }
-        
-        // Inicia o monitoramento quando a página carrega
-        window.onload = function() {
-            // Limpa qualquer status anterior
-            localStorage.removeItem('alarmStatus');
-            
-            // Inicia a verificação imediata
-            checkAlarmStatus();
-            
-            // Configura verificação a cada 2 segundos
-            monitoringInterval = setInterval(checkAlarmStatus, 2000);
-        };
-        
-        // Limpa o intervalo quando a página é fechada
-        window.onbeforeunload = function() {
-            if (monitoringInterval) {
-                clearInterval(monitoringInterval);
-            }
-        };
-    </script>
+  <img src="logo-fetin.png" alt="Logo FETIN" class="logo">
 
+  <script>
+    const ESP_BASE_URL = 'http://10.73.241.104'; // IP do seu ESP
+    const POLL_INTERVAL = 2000; // Verifica a cada 2 segundos
+
+    let isMonitoring = true;
+    let monitoringInterval = null;
+
+    const statusText = document.getElementById('statusText');
+    const statusIndicator = document.getElementById('statusIndicator');
+    const lastCheckEl = document.getElementById('lastCheck');
+
+    function setStatus(text, variant) {
+      statusText.textContent = text;
+      statusIndicator.classList.remove('status-ok','status-checking','status-error');
+      statusIndicator.classList.add('status-indicator', `status-${variant}`);
+    }
+
+    function updateLastCheck() {
+      const now = new Date();
+      lastCheckEl.textContent = `Última verificação: ${now.toLocaleTimeString()}`;
+    }
+
+    async function checkPessoaDetectada() {
+      if (!isMonitoring) return;
+
+      setStatus('Verificando...', 'checking');
+
+      try {
+        // Faz request ao ESP para obter o valor da variável pessoaDetectada
+        const response = await fetch(`${ESP_BASE_URL}/Alarme`, {
+          method: 'GET',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        // Tenta interpretar a resposta como JSON primeiro
+        const data = await response.json();
+        pessoaDetectada = Boolean(data.detectado);
+        if(pessoaDetectada){
+          setTimeout(() => {
+            window.location.replace('AlarmeAcionado.html');
+          }, 800);
+        }
+
+        const contentType = response.headers.get('content-type');
+        
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          // Verifica diferentes possíveis nomes da variável
+          pessoaDetectada = Boolean(data.pessoaDetectada || data.detectado || data.detected || data.value);
+        } else {
+          // Se não for JSON, trata como texto
+          const text = await response.text();
+          const cleanText = text.trim().toLowerCase();
+          pessoaDetectada = (cleanText === 'true' || cleanText === '1' || cleanText === 'on');
+        }
+
+        updateLastCheck();
+
+        if (pessoaDetectada === true) {
+          setStatus('PESSOA DETECTADA!', 'error');
+          isMonitoring = false;
+          if (monitoringInterval) {
+            clearInterval(monitoringInterval);
+          }
+          
+          // Redireciona para a página de alarme acionado após um breve delay
+          setTimeout(() => {
+            window.location.replace('AlarmeAcionado.html');
+          }, 800);
+          return;
+        } else {
+          setStatus('Sistema Normal', 'ok');
+        }
+
+      } catch (error) {
+        console.error('Erro ao verificar pessoaDetectada:', error);
+        setStatus('Erro na Verificação', 'error');
+        updateLastCheck();
+        // Continua monitorando mesmo com erro
+      }
+    }
+
+    function returnToIndex() {
+      isMonitoring = false;
+      if (monitoringInterval) {
+        clearInterval(monitoringInterval);
+      }
+      window.location.href = 'index.html';
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        if (monitoringInterval) {
+          clearInterval(monitoringInterval);
+          monitoringInterval = null;
+        }
+      } else {
+        if (!monitoringInterval && isMonitoring) {
+          checkPessoaDetectada();
+          monitoringInterval = setInterval(checkPessoaDetectada, POLL_INTERVAL);
+        }
+      }
+    });
+
+    window.onload = function() {
+      console.log('Iniciando monitoramento da variável pessoaDetectada...');
+      checkPessoaDetectada();
+      monitoringInterval = setInterval(checkPessoaDetectada, POLL_INTERVAL);
+    };
+
+    // Limpa o intervalo quando a página é fechada
+    window.onbeforeunload = function() {
+      if (monitoringInterval) {
+        clearInterval(monitoringInterval);
+      }
+    };
+  </script>
 </body>
 </html>
