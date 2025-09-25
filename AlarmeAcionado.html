@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Desligamento</title>
+    <style>
+        body {
+            font-family: Georgia, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: #121212;
+            color: #f0eada;
+            margin: 0;
+        }
+        h1, h4 {
+            margin-bottom: 15px;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #333;
+            color: #f0eada;
+            border: 1px solid #666;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 8px;
+        }
+        button:hover {
+            background-color: #444;
+        }
+        .logo {
+            position: fixed;
+            bottom: 0px;
+            left: 10px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Seu alarme foi acionado</h1>
+    <h3>Foi você quem acionou?</h3>
+
+    <button onclick="desligar()">Desligar Alarme</button>
+
+    <img src="logo-fetin.png" alt="Logo FETIN" class="logo">
+
+    <script>
+        async function desligar() {
+            try {
+                // Faz a requisição para desligar o LED
+                const response = await fetch('http://172.20.10.3/led/off', {
+                    method: 'GET',
+                    mode: 'no-cors' // Para evitar problemas de CORS
+                });
+                
+                //alert("Alarme desligado");
+                
+                // Redireciona para a página AlarmeDesligado
+                window.location.href = 'AlarmeDesligado.html';
+                
+            } catch (error) {
+                console.error('Erro ao desligar o alarme:', error);
+                alert("Erro ao desligar o alarme. Tente novamente.");
+            }
+        }
+    </script>
+
+</body>
+</html>

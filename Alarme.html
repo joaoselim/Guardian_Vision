@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Alarme</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Georgia, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: #121212;
+            color: #f0eada;
+            position: relative;
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        .status {
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-left: 10px;
+            animation: pulse 2s infinite;
+        }
+        .status-ok {
+            background-color: #4CAF50;
+        }
+        .status-checking {
+            background-color: #FFC107;
+        }
+        .status-error {
+            background-color: #F44336;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .info {
+            margin-bottom: 20px;
+            color: #aaa;
+            font-size: 0.9em;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #333;
+            color: #f0eada;
+            border: 1px solid #666;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 8px;
+        }
+        button:hover {
+            background-color: #444;
+        }
+        .logo {
+            position: fixed;
+            bottom: 0px;
+            left: 10px;
+            width: 200px;
+        }
+        .last-check {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.8em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Alarme</h1>
+    
+    <div class="status">
+        Status: <span id="statusText">Monitorando</span>
+        <span id="statusIndicator" class="status-indicator status-checking"></span>
+    </div>
+    
+    <div class="info">
+        
+    </div>
+    
+    <button onclick="returnToIndex()">Inserir outro Email</button>
+    
+    <img src="logo-fetin.png" alt="Logo FETIN" class="logo">
+    
+    <div class="last-check">
+        Última verificação: <span id="lastCheck">--:--:--</span>
+    </div>
+
+    <script>
+        let isMonitoring = true;
+        let alarmActivated = false; // Variável que representa se o alarme foi ativado
+        let monitoringInterval;
+        
+        // Função para verificar o status do alarme
+        async function checkAlarmStatus() {
+            if (!isMonitoring) return;
+            
+            try {
+                // Atualiza o horário da última verificação
+                const now = new Date();
+                document.getElementById('lastCheck').textContent = now.toLocaleTimeString();
+                
+                // Aqui você pode fazer uma requisição para verificar o status real do alarme
+                // Por exemplo: const response = await fetch('http://172.20.10.3/alarm/status');
+                // const data = await response.json();
+                // alarmActivated = data.activated;
+                
+                // Para demonstração, vamos verificar se existe uma variável no localStorage
+                // ou se foi ativada manualmente
+                const storedStatus = localStorage.getItem('alarmStatus');
+                if (storedStatus === 'true') {
+                    alarmActivated = true;
+                }
+                
+                // Se o alarme foi ativado, redireciona para a página de alarme acionado
+                if (alarmActivated) {
+                    document.getElementById('statusText').textContent = 'ALARME ATIVADO!';
+                    document.getElementById('statusIndicator').className = 'status-indicator status-error';
+                    
+                    // Aguarda um momento para mostrar o status e depois redireciona
+                    setTimeout(() => {
+                        window.location.href = 'AlarmeAcionado.html';
+                    }, 1000);
+                    return;
+                }
+                
+                // Status normal - alarme não ativado
+                document.getElementById('statusText').textContent = 'Sistema Normal';
+                document.getElementById('statusIndicator').className = 'status-indicator status-ok';
+                
+            } catch (error) {
+                console.error('Erro ao verificar status do alarme:', error);
+                document.getElementById('statusText').textContent = 'Erro na Verificação';
+                document.getElementById('statusIndicator').className = 'status-indicator status-error';
+            }
+        }
+        
+        // Função para retornar ao índice
+        function returnToIndex() {
+            window.location.href = 'index.html';
+        }
+        
+        // Inicia o monitoramento quando a página carrega
+        window.onload = function() {
+            // Limpa qualquer status anterior
+            localStorage.removeItem('alarmStatus');
+            
+            // Inicia a verificação imediata
+            checkAlarmStatus();
+            
+            // Configura verificação a cada 2 segundos
+            monitoringInterval = setInterval(checkAlarmStatus, 2000);
+        };
+        
+        // Limpa o intervalo quando a página é fechada
+        window.onbeforeunload = function() {
+            if (monitoringInterval) {
+                clearInterval(monitoringInterval);
+            }
+        };
+    </script>
+
+</body>
+</html>
