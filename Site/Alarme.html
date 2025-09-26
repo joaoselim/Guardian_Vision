@@ -93,7 +93,7 @@
 
       try {
         // Faz request ao ESP para obter o valor da variável pessoaDetectada
-        const response = await fetch(`${ESP_BASE_URL}/Alarme`, {
+        const response = await fetch(`${ESP_BASE_URL}/api/status`, {
           method: 'GET',
           headers: {
             'Cache-Control': 'no-cache'
